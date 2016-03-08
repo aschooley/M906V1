@@ -31,7 +31,8 @@ extern "C" {
 // *****************************************************************************
 
 /**
- * Enumeration of all the alternate functions a pin can have.
+ * Enumeration of all the alternate functions a pin can have.  See data sheet
+ * for function assignment.
  */
 typedef enum
 {

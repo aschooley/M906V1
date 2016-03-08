@@ -27,6 +27,7 @@
 // Standard library header files
 #include <stdbool.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 // *****************************************************************************
 // Private macro definitions 
@@ -153,8 +154,13 @@ int main(void) {
 
     bsp_pins_initalize();
 
+	drv_rtc_init();
 
-    	drv_rtc_init();
+
+
+
+
+
       //day(1-31), month(1-12), year(0-99), hour(0-23), minute(0-59), second(0-59)
     	//rtc_ds3234_t set_time = {4,3,16,1,30,00};
       //drv_rtc_set_time_date(set_time);
@@ -211,7 +217,25 @@ int main(void) {
 
         bsp_pin_digital_toggle(&pins.led_1);
 
-        i = 1000000;                          // SW Delay
+        uint8_t got_msg = trace_msg_recieved();
+        if(0 != got_msg)
+        {
+            uint8_t tmp_buf[100];
+            read_trace_msg(tmp_buf, 100);
+            logf(TRACE, "string rx: %s", tmp_buf);
+
+            if ('t'==tmp_buf[0])
+            {
+            	rtc_t set_time;
+            	sscanf(tmp_buf,"%*s %"SCNu8 "%"SCNu8 "%"SCNu8 "%"SCNu8 "%"SCNu8 "%"SCNu8 ,&set_time.year,&set_time.month, &set_time.day, &set_time.hour, &set_time.minute, &set_time.second );
+            	drv_rtc_set_time_date(&set_time);
+            }
+
+
+
+        }
+
+        i = 500000;                          // SW Delay
         do i--;
         while(i != 0);
     }

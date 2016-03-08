@@ -13,12 +13,16 @@
 // Application header files
 #include "bsp_pins_types.h"
 #include "bsp_pins_conf.h"
+#ifdef PIN_TRACE
 #include "drv_logger.h"
 #include "util_log.h"
+#endif
 // Internal library header files
 // Third-party library header files
 #include <msp430.h>
 // Standard library header files
+
+#undef PIN_TRACE
 
 
 // *****************************************************************************
@@ -251,7 +255,9 @@ void bsp_pins_initalize(void)
     for(pin_table_iterator=0;pin_table_iterator<sizeof(init_pin_table)/sizeof(init_pin_table[0]);pin_table_iterator++)
     {
     	bsp_pin_setup(&init_pin_table[pin_table_iterator]);
-    	//logf(TRACE, "setup pin: %s", pin_names[pin_table_iterator]);
+#ifdef PIN_TRACE
+    	logf(TRACE, "setup pin: %s", pin_names[pin_table_iterator]);
+#endif
     }
 }
 

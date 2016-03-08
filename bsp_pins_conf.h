@@ -222,6 +222,10 @@ extern "C" {
 // Public constant definitions
 // *****************************************************************************
 
+/**
+ * Struct to hold info about all of the port pins.  This is created with the
+ * help of a xmacro.
+ */
 static const struct
 {
 #define pin_table_entry(a,b,c,d,e,f) pin_t a;
@@ -233,6 +237,10 @@ static const struct
 #undef pin_table_entry
 };
 
+/**
+ * Array of stringified names for each pin.  Name index matches the pin table
+ * entry thanks to xmacro.
+ */
 static const char* const pin_names[]={
 #define pin_table_entry(a,b,c,d,e,f) #a,
 		pin_table
