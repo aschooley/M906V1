@@ -40,7 +40,7 @@ extern "C" {
 /**
  * Start up the trace logger.  Must be called before any trace calls.
  */
-void logger_init(void);
+void logger_init (void);
 
 /**
  * Logs a message.

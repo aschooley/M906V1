@@ -19,7 +19,7 @@
 #include <string.h>
 #include <stdbool.h>
 // *****************************************************************************
-// Private macro definitions 
+// Private macro definitions
 // *****************************************************************************
 
 // *****************************************************************************
@@ -38,10 +38,10 @@ static const RX_DATA_BUFF_SZ = 200;
 
 volatile static struct
 {
-	char rx_data[RX_DATA_BUFF_SZ];
-	uint8_t rx_index;
-	bool msg_rdy;
-}g;
+    char    rx_data[RX_DATA_BUFF_SZ];
+    uint8_t rx_index;
+    bool    msg_rdy;
+} g;
 
 // *****************************************************************************
 // Private static function and ISR prototypes
@@ -57,141 +57,156 @@ volatile static struct
 
 void init_uart(void)
 {
-	EUSCI_A_UART_initParam uart_a1_param={
-			EUSCI_A_UART_CLOCKSOURCE_ACLK,
-			3,
-			0,
-			146,
-			EUSCI_A_UART_NO_PARITY,
-			EUSCI_A_UART_LSB_FIRST,
-			EUSCI_A_UART_ONE_STOP_BIT,
-			EUSCI_A_UART_MODE,
-			EUSCI_A_UART_LOW_FREQUENCY_BAUDRATE_GENERATION
-	};
+    EUSCI_A_UART_initParam uart_a1_param = {
+        EUSCI_A_UART_CLOCKSOURCE_ACLK,
+        3,
+        0,
+        146,
+        EUSCI_A_UART_NO_PARITY,
+        EUSCI_A_UART_LSB_FIRST,
+        EUSCI_A_UART_ONE_STOP_BIT,
+        EUSCI_A_UART_MODE,
+        EUSCI_A_UART_LOW_FREQUENCY_BAUDRATE_GENERATION
+    };
 
-	EUSCI_A_UART_initParam uart_a0_param={
-			EUSCI_A_UART_CLOCKSOURCE_ACLK,
-			3,
-			0,
-			146,
-			EUSCI_A_UART_NO_PARITY,
-			EUSCI_A_UART_LSB_FIRST,
-			EUSCI_A_UART_ONE_STOP_BIT,
-			EUSCI_A_UART_MODE,
-			EUSCI_A_UART_LOW_FREQUENCY_BAUDRATE_GENERATION
-	};
+    EUSCI_A_UART_initParam uart_a0_param = {
+        EUSCI_A_UART_CLOCKSOURCE_ACLK,
+        3,
+        0,
+        146,
+        EUSCI_A_UART_NO_PARITY,
+        EUSCI_A_UART_LSB_FIRST,
+        EUSCI_A_UART_ONE_STOP_BIT,
+        EUSCI_A_UART_MODE,
+        EUSCI_A_UART_LOW_FREQUENCY_BAUDRATE_GENERATION
+    };
 /*
-	GPIO_setAsInputPin(GPIO_PORT_P3, GPIO_PIN5);
-	GPIO_setOutputHighOnPin(GPIO_PORT_P3,GPIO_PIN4);
-	GPIO_setAsOutputPin(GPIO_PORT_P3,GPIO_PIN4);
+        GPIO_setAsInputPin(GPIO_PORT_P3, GPIO_PIN5);
+        GPIO_setOutputHighOnPin(GPIO_PORT_P3,GPIO_PIN4);
+        GPIO_setAsOutputPin(GPIO_PORT_P3,GPIO_PIN4);
 
-	GPIO_setAsPeripheralModuleFunctionInputPin(
-			GPIO_PORT_P3,
-			GPIO_PIN5,
-			GPIO_PRIMARY_MODULE_FUNCTION
-			);
-	GPIO_setAsPeripheralModuleFunctionOutputPin(
-			GPIO_PORT_P3,
-			GPIO_PIN4,
-			GPIO_PRIMARY_MODULE_FUNCTION
-			);
-*/
-	EUSCI_A_UART_init(EUSCI_A1_BASE,&uart_a1_param);
-	EUSCI_A_UART_enable(EUSCI_A1_BASE);
-	g.msg_rdy=false;
-	g.rx_index=0;
-	EUSCI_A_UART_enableInterrupt(EUSCI_A1_BASE,EUSCI_A_UART_RECEIVE_INTERRUPT); // Enable interrupt
+        GPIO_setAsPeripheralModuleFunctionInputPin(
+                        GPIO_PORT_P3,
+                        GPIO_PIN5,
+                        GPIO_PRIMARY_MODULE_FUNCTION
+                        );
+        GPIO_setAsPeripheralModuleFunctionOutputPin(
+                        GPIO_PORT_P3,
+                        GPIO_PIN4,
+                        GPIO_PRIMARY_MODULE_FUNCTION
+                        );
+ */
+    EUSCI_A_UART_init(EUSCI_A1_BASE, &uart_a1_param);
+    EUSCI_A_UART_enable(EUSCI_A1_BASE);
+    g.msg_rdy  = false;
+    g.rx_index = 0;
+    EUSCI_A_UART_enableInterrupt(EUSCI_A1_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);    // Enable interrupt
 
 
-	EUSCI_A_UART_init(EUSCI_A0_BASE,&uart_a0_param);
-	EUSCI_A_UART_enable(EUSCI_A0_BASE);
+    EUSCI_A_UART_init(EUSCI_A0_BASE, &uart_a0_param);
+    EUSCI_A_UART_enable(EUSCI_A0_BASE);
 
 }
 
-int cout_data_channel(const char *_ptr)
+int cout_data_channel(const char * _ptr)
 {
-	// Vars to iterate over the string
-	uint16_t i, len;
+    // Vars to iterate over the string
+    uint16_t i, len;
 
-	// Get the length of the string
-	len = strlen(_ptr);
+    // Get the length of the string
+    len = strlen(_ptr);
 
-	// Loop over each byte of the string
-	for(i=0 ; i<len ; i++)
-	{
-		// Wait for the peripherial to be available
-		while (!EUSCI_A_UART_getInterruptStatus(EUSCI_A0_BASE,EUSCI_A_UART_TRANSMIT_INTERRUPT_FLAG));//while(!(UCA1IFG&UCTXIFG));
-		// Stuff byte into the tx reg
-		EUSCI_A_UART_transmitData(EUSCI_A0_BASE,_ptr[i]);//UCA1TXBUF = (unsigned char) _ptr[i];
-	}
+    // Loop over each byte of the string
+    for (i = 0; i < len; i++)
+    {
+        // Wait for the peripherial to be available
+        while (!EUSCI_A_UART_getInterruptStatus(EUSCI_A0_BASE,
+                                                EUSCI_A_UART_TRANSMIT_INTERRUPT_FLAG))
+        {
+            ;                                                                                                //while(!(UCA1IFG&UCTXIFG));
+        }
+        // Stuff byte into the tx reg
+        EUSCI_A_UART_transmitData(EUSCI_A0_BASE, _ptr[i]);       //UCA1TXBUF = (unsigned char) _ptr[i];
+    }
 
-	// Return the number of bytes sent
-	return len;
+    // Return the number of bytes sent
+    return len;
 }
 
 
 uint8_t trace_msg_recieved(void)
 {
-	uint8_t retval = 0;
-	if(g.msg_rdy)
-	{
-		retval = g.rx_index;
-	}
-	return (retval);
+    uint8_t retval = 0;
+
+    if (g.msg_rdy)
+    {
+        retval = g.rx_index;
+    }
+    return (retval);
 }
 
 bool read_trace_msg(char * buffer, uint8_t buff_sz)
 {
-	bool retval = false;
-	if(g.rx_index <= buff_sz)
-	{
-		const uint8_t bytes_copied = strncpy(buffer,g.rx_data,RX_DATA_BUFF_SZ);
+    bool retval = false;
 
-		if(g.rx_index == bytes_copied)
-		{
-			retval = true;
-		}
-		g.msg_rdy=false;
-		g.rx_index=0;
+    if (g.rx_index <= buff_sz)
+    {
+        const uint8_t bytes_copied = strncpy(buffer, g.rx_data, RX_DATA_BUFF_SZ);
 
-		EUSCI_A_UART_enableInterrupt(EUSCI_A1_BASE,EUSCI_A_UART_RECEIVE_INTERRUPT); // Enable interrupt
-	}
-	return (retval);
+        if (g.rx_index == bytes_copied)
+        {
+            retval = true;
+        }
+        g.msg_rdy  = false;
+        g.rx_index = 0;
+
+        EUSCI_A_UART_enableInterrupt(EUSCI_A1_BASE,
+                                     EUSCI_A_UART_RECEIVE_INTERRUPT);                       // Enable interrupt
+    }
+    return (retval);
 }
 
 // *****************************************************************************
 // Private function bodies
 // *****************************************************************************
 
-int fputc(int _c, register FILE *_fp)
+int fputc(int _c, register FILE * _fp)
 {
-	// Wait for peripherial to be available
-	while (!EUSCI_A_UART_getInterruptStatus(EUSCI_A1_BASE,EUSCI_A_UART_TRANSMIT_INTERRUPT_FLAG));//while(!(UCA1IFG&UCTXIFG));
-	// Stuff byte into tx reg
-	EUSCI_A_UART_transmitData(EUSCI_A1_BASE,_c);//UCA1TXBUF = (unsigned char) _c;
-	// Return tx'd byte, for giggles I suppose
-	return((unsigned char)_c);
+    // Wait for peripherial to be available
+    while (!EUSCI_A_UART_getInterruptStatus(EUSCI_A1_BASE,
+                                            EUSCI_A_UART_TRANSMIT_INTERRUPT_FLAG))
+    {
+        ;                                                                                            //while(!(UCA1IFG&UCTXIFG));
+    }
+    // Stuff byte into tx reg
+    EUSCI_A_UART_transmitData(EUSCI_A1_BASE, _c);   //UCA1TXBUF = (unsigned char) _c;
+    // Return tx'd byte, for giggles I suppose
+    return ((unsigned char)_c);
 }
 
-int fputs(const char *_ptr, register FILE *_fp)
+int fputs(const char * _ptr, register FILE * _fp)
 {
-	// Vars to iterate over the string
-	uint16_t i, len;
+    // Vars to iterate over the string
+    uint16_t i, len;
 
-	// Get the length of the string
-	len = strlen(_ptr);
+    // Get the length of the string
+    len = strlen(_ptr);
 
-	// Loop over each byte of the string
-	for(i=0 ; i<len ; i++)
-	{
-		// Wait for the peripherial to be available
-		while (!EUSCI_A_UART_getInterruptStatus(EUSCI_A1_BASE,EUSCI_A_UART_TRANSMIT_INTERRUPT_FLAG));//while(!(UCA1IFG&UCTXIFG));
-		// Stuff byte into the tx reg
-		EUSCI_A_UART_transmitData(EUSCI_A1_BASE,_ptr[i]);//UCA1TXBUF = (unsigned char) _ptr[i];
-	}
+    // Loop over each byte of the string
+    for (i = 0; i < len; i++)
+    {
+        // Wait for the peripherial to be available
+        while (!EUSCI_A_UART_getInterruptStatus(EUSCI_A1_BASE,
+                                                EUSCI_A_UART_TRANSMIT_INTERRUPT_FLAG))
+        {
+            ;                                                                                                //while(!(UCA1IFG&UCTXIFG));
+        }
+        // Stuff byte into the tx reg
+        EUSCI_A_UART_transmitData(EUSCI_A1_BASE, _ptr[i]);       //UCA1TXBUF = (unsigned char) _ptr[i];
+    }
 
-	// Return the number of bytes sent
-	return len;
+    // Return the number of bytes sent
+    return len;
 }
 
 // *****************************************************************************
@@ -202,23 +217,25 @@ int fputs(const char *_ptr, register FILE *_fp)
 #pragma vector=USCI_A1_VECTOR
 __interrupt void USCI_A1_ISR(void)
 {
-	switch(__even_in_range(UCA1IV,USCI_UART_UCTXCPTIFG))
-	{
-		case USCI_UART_UCRXIFG:
-			g.rx_data[g.rx_index]=EUSCI_A_UART_receiveData(EUSCI_A1_BASE);
-			if(10==g.rx_data[g.rx_index])
-			{
-				EUSCI_A_UART_disableInterrupt(EUSCI_A1_BASE,EUSCI_A_UART_RECEIVE_INTERRUPT);
-				g.msg_rdy=true;
-				g.rx_index++;
-				g.rx_data[g.rx_index]=0;
-			}
-			else if(RX_DATA_BUFF_SZ - 1 > g.rx_index)
-			{
-				g.rx_index++;
-			}
+    switch (__even_in_range(UCA1IV, USCI_UART_UCTXCPTIFG))
+    {
+        case USCI_UART_UCRXIFG:
+            g.rx_data[g.rx_index] = EUSCI_A_UART_receiveData(EUSCI_A1_BASE);
+
+            if (10 == g.rx_data[g.rx_index])
+            {
+                EUSCI_A_UART_disableInterrupt(EUSCI_A1_BASE,
+                                              EUSCI_A_UART_RECEIVE_INTERRUPT);
+                g.msg_rdy = true;
+                g.rx_index++;
+                g.rx_data[g.rx_index] = 0;
+            }
+            else if (RX_DATA_BUFF_SZ - 1 > g.rx_index)
+            {
+                g.rx_index++;
+            }
 
 
-			break;
-	}
+            break;
+    }
 }

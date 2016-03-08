@@ -126,7 +126,7 @@ void util_log(util_log_level_t const level,
 
         if (level <= g.level)
         {
-        	char time_buff[18];
+            char time_buff[18];
             g.get_time_function(&time_buff, 18);
 
             const uint32_t out_msg_size = 255;
@@ -135,7 +135,7 @@ void util_log(util_log_level_t const level,
                      "%s, %s, %s, %s, line %ld, %s \r\n",
                      LEVEL_STRINGS[level],
                      g.host_name,
-					 time_buff,
+                     time_buff,
                      file,
                      line,
                      msg);

@@ -40,15 +40,15 @@ extern "C" {
 // *****************************************************************************
 
 
-int cout_data_channel(const char *_ptr);
+int cout_data_channel (const char * _ptr);
 
 /**
  * Return how many bytes are in a message if a complete message hase been
  * recieved on the trace port.
  */
-uint8_t trace_msg_recieved(void);
+uint8_t trace_msg_recieved (void);
 
-bool read_trace_msg(char * buffer, uint8_t buff_sz);
+bool read_trace_msg (char * buffer, uint8_t buff_sz);
 
 // *****************************************************************************
 // Public inline function definitions

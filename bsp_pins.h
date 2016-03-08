@@ -28,12 +28,12 @@ extern "C" {
 // Public macro definitions
 // *****************************************************************************
 
-#define PxX(p,x) P##p##x
-#define PxOUT(p) PxX(p,OUT)
-#define PxDIR(p) PxX(p,DIR)
-#define PxIN(p)  PxX(p,IN)
-#define PxSEL0(p) PxX(p,SEL0)
-#define PxSEL1(p) PxX(p,SEL1)
+#define PxX(p, x) P ## p ## x
+#define PxOUT(p) PxX(p, OUT)
+#define PxDIR(p) PxX(p, DIR)
+#define PxIN(p)  PxX(p, IN)
+#define PxSEL0(p) PxX(p, SEL0)
+#define PxSEL1(p) PxX(p, SEL1)
 
 // *****************************************************************************
 // Public data type definitions (enum, struct, typedef, union)
@@ -52,28 +52,28 @@ extern "C" {
  * @param[in] pin to set.
  * @param[in] function to set it to.
  */
-void bsp_pin_set_alt_funct(const pin_t * const pin, pin_alt_function function);
+void bsp_pin_set_alt_funct (const pin_t * const pin, pin_alt_function function);
 
 /**
  * Sets a pin to input or output.
  * @param[in] pin to set.
  * @param[in] type what type to set the pin to.
  */
-void bsp_pin_set_mode(const pin_t * const pin, pin_type_t type);
+void bsp_pin_set_mode (const pin_t * const pin, pin_type_t type);
 
 /**
  * Sets a digital ouput pin high or low.
  * @param[in] pin to set.
  * @param[in] state to set the pin to.
  */
-void bsp_pin_digital_write(const pin_t * const pin, pin_state_t state);
+void bsp_pin_digital_write (const pin_t * const pin, pin_state_t state);
 
 
 /**
  * Toggles a digial output pin.  Will xor its state.  High -> low, low -> high.
  * @param[in] pin to toggle.
  */
-void bsp_pin_digital_toggle(const pin_t * const pin);
+void bsp_pin_digital_toggle (const pin_t * const pin);
 
 /**
  * Reads the value of an input pin.
@@ -81,12 +81,12 @@ void bsp_pin_digital_toggle(const pin_t * const pin);
  * @retval HIGH the pin is a logic 1.
  * @retval LOW the pin is a logic 0/
  */
-pin_state_t bsp_pin_digital_read(const pin_t * const pin);
+pin_state_t bsp_pin_digital_read (const pin_t * const pin);
 
 /**
  * Sets up the pins accodring to the pin table in the bsp_pins_conf.h file
  */
-void bsp_pins_initalize(void);
+void bsp_pins_initalize (void);
 
 // *****************************************************************************
 // Public inline function definitions

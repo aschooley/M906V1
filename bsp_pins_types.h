@@ -36,10 +36,10 @@ extern "C" {
  */
 typedef enum
 {
-	PRIMARY,
-	SECONDARY,
-	TERTIARY,
-	IO,
+    PRIMARY,
+    SECONDARY,
+    TERTIARY,
+    IO,
 }pin_alt_function;
 
 /**
@@ -47,18 +47,18 @@ typedef enum
  */
 typedef enum
 {
-	PORT_1=1,
-	PORT_2,
-	PORT_3,
-	PORT_4,
-	PORT_5,
-	PORT_6,
-	PORT_7,
-	PORT_8,
-	PORT_9,
-	PORT_10,
-	PORT_J,
-	PORT_NA
+    PORT_1 = 1,
+    PORT_2,
+    PORT_3,
+    PORT_4,
+    PORT_5,
+    PORT_6,
+    PORT_7,
+    PORT_8,
+    PORT_9,
+    PORT_10,
+    PORT_J,
+    PORT_NA
 }pin_port_t;
 
 /**
@@ -66,15 +66,15 @@ typedef enum
  */
 typedef enum
 {
-	BIT_0=0,
-	BIT_1,
-	BIT_2,
-	BIT_3,
-	BIT_4,
-	BIT_5,
-	BIT_6,
-	BIT_7,
-	BIT_NA
+    BIT_0 = 0,
+    BIT_1,
+    BIT_2,
+    BIT_3,
+    BIT_4,
+    BIT_5,
+    BIT_6,
+    BIT_7,
+    BIT_NA
 } pin_bit_t;
 
 /**
@@ -82,11 +82,11 @@ typedef enum
  */
 typedef enum
 {
-	LOW=0,
-	HIGH,
-	ENABLED,
-	DISABLED,
-	NONE // for input case
+    LOW = 0,
+    HIGH,
+    ENABLED,
+    DISABLED,
+    NONE     // for input case
 }pin_state_t;
 
 /**
@@ -94,9 +94,9 @@ typedef enum
  */
 typedef enum
 {
-	INPUT,
-	OUTPUT,
-	ANALOG
+    INPUT,
+    OUTPUT,
+    ANALOG
 }pin_type_t;
 
 /**
@@ -104,9 +104,9 @@ typedef enum
  */
 typedef struct
 {
-	uint8_t number;
-	pin_port_t port;
-	pin_bit_t bit;
+    uint8_t    number;
+    pin_port_t port;
+    pin_bit_t  bit;
 }physical_pin_t;
 
 /**
@@ -115,11 +115,11 @@ typedef struct
  */
 typedef struct
 {
-	physical_pin_t hw;
-	pin_type_t type;
-	pin_state_t default_state;
-	pin_state_t enabled_state;
-	pin_alt_function alternate_function;
+    physical_pin_t   hw;
+    pin_type_t       type;
+    pin_state_t      default_state;
+    pin_state_t      enabled_state;
+    pin_alt_function alternate_function;
 }pin_t;
 
 // *****************************************************************************

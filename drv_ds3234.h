@@ -36,25 +36,25 @@ extern "C" {
  */
 typedef struct
 {
-	/// year(0-99)
-	uint8_t year;
+    /// year(0-99)
+    uint8_t year;
 
-	/// month(1-12)
-	uint8_t month;
+    /// month(1-12)
+    uint8_t month;
 
-	/// day(1-31)
-	uint8_t day;
+    /// day(1-31)
+    uint8_t day;
 
-	/// hour(0-23)
-	uint8_t hour;
+    /// hour(0-23)
+    uint8_t hour;
 
-	/// minute(0-59)
-	uint8_t minute;
+    /// minute(0-59)
+    uint8_t minute;
 
-	/// second(0-59)
-	uint8_t second;
+    /// second(0-59)
+    uint8_t second;
 
-}rtc_t, *rtc_t_ptr;
+}rtc_t, * rtc_t_ptr;
 
 // *****************************************************************************
 // Public constant definitions
@@ -68,19 +68,19 @@ typedef struct
  * Setup the RTC chip.  SPI settings are hardcoded for the M906 board.  Will
  * send the configuration commands to the RTC chip.
  */
-void drv_rtc_init(void);
+void drv_rtc_init (void);
 
 /**
  * Set the date and time on the chip.
  * @param[in] set_time structure that contains the date and time info.
  */
-void drv_rtc_set_time_date(rtc_t * set_time);
+void drv_rtc_set_time_date (rtc_t * set_time);
 
 /**
  * Read out the date and time from the RTC chip.
  * @return structure that contains the date and time info.
  */
-rtc_t drv_rtc_read_time_date(void);
+rtc_t drv_rtc_read_time_date (void);
 
 // *****************************************************************************
 // Public inline function definitions

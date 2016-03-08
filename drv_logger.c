@@ -24,7 +24,7 @@
 #include <string.h>
 
 // *****************************************************************************
-// Private macro definitions 
+// Private macro definitions
 // *****************************************************************************
 
 // *****************************************************************************
@@ -42,7 +42,7 @@
 // *****************************************************************************
 // Private static function and ISR prototypes
 // *****************************************************************************
-void get_time(char * const buffer, const uint8_t buff_sz);
+void get_time (char * const buffer, const uint8_t buff_sz);
 
 void error_logger_log (const char * msg);
 
@@ -50,7 +50,7 @@ void trace_logger_log (const char * msg);
 
 void info_logger_log (const char * msg);
 
-void init_uart(void);
+void init_uart (void);
 // *****************************************************************************
 // Private inline function definitions
 // *****************************************************************************
@@ -61,9 +61,9 @@ void init_uart(void);
 
 void logger_init(void)
 {
-	init_uart();
-	util_log_init(TRACE, "Optics_Reader", error_logger_log, info_logger_log,
-					trace_logger_log, get_time);
+    init_uart();
+    util_log_init(TRACE, "Optics_Reader", error_logger_log, info_logger_log,
+                  trace_logger_log, get_time);
 }
 
 // *****************************************************************************
@@ -72,26 +72,28 @@ void logger_init(void)
 
 void get_time(char * const buffer, const uint8_t buff_sz)
 {
-	rtc_t current_time = drv_rtc_read_time_date();
+    rtc_t current_time = drv_rtc_read_time_date();
 
-	snprintf(buffer,buff_sz,"20%02d%02d%02d %02d:%02d:%02d",current_time.year,
-												  		 current_time.month,
-														 current_time.day,
-														 current_time.hour,
-														 current_time.minute,
-														 current_time.second);
+    snprintf(buffer, buff_sz, "20%02d%02d%02d %02d:%02d:%02d",
+             current_time.year,
+             current_time.month,
+             current_time.day,
+             current_time.hour,
+             current_time.minute,
+             current_time.second);
 }
 void error_logger_log (const char * msg)
 {
-	fputs("%s",msg);
+    fputs("%s", msg);
 }
 void trace_logger_log (const char * msg)
 {
-	fputs(msg,0);
-}void info_logger_log (const char * msg)
+    fputs(msg, 0);
+}
+void info_logger_log (const char * msg)
 {
-	fputs(msg,0);
-	cout_data_channel(msg);
+    fputs(msg, 0);
+    cout_data_channel(msg);
 
 }
 

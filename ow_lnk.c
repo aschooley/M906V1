@@ -46,26 +46,26 @@
 #include "bsp_pins_conf.h"
 
 // exportable functions required
-SMALLINT OpenCOM(int,char *);
-SMALLINT WriteCOM(int,int,uchar *);
-void     FlushCOM(int);
-int      ReadCOM(int,int,uchar *);
-void     BreakCOM(int);
-void     SetBaudCOM(int,int);
-void     CloseCOM(int);
-long     msGettick(void);
-void     msDelay(int);
-SMALLINT owHasPowerDelivery(int);
-SMALLINT owHasOverDrive(int);
-SMALLINT owHasProgramPulse(int);
-SMALLINT owWriteBytePower(int,SMALLINT);
-SMALLINT owReadBitPower(int,SMALLINT);
+SMALLINT OpenCOM (int, char *);
+SMALLINT WriteCOM (int, int, uchar *);
+void     FlushCOM (int);
+int      ReadCOM (int, int, uchar *);
+void     BreakCOM (int);
+void     SetBaudCOM (int, int);
+void     CloseCOM (int);
+long     msGettick (void);
+void     msDelay (int);
+SMALLINT owHasPowerDelivery (int);
+SMALLINT owHasOverDrive (int);
+SMALLINT owHasProgramPulse (int);
+SMALLINT owWriteBytePower (int, SMALLINT);
+SMALLINT owReadBitPower (int, SMALLINT);
 
 volatile static struct
 {
-	char rx_data[200];
-	uint8_t rx_index;
-}g;
+    char    rx_data[200];
+    uint8_t rx_index;
+} g;
 
 //---------------------------------------------------------------------------
 // Attempt to open a com port.  Keep the handle in ComID.
@@ -82,27 +82,27 @@ volatile static struct
 // Returns: TRUE(1)  - success, COM port opened
 //          FALSE(0) - failure, could not open specified port
 //
-SMALLINT OpenCOM(int portnum, char *port_zstr)
+SMALLINT OpenCOM(int portnum, char * port_zstr)
 {
-	EUSCI_A_UART_initParam uart_a0_param={
-				EUSCI_A_UART_CLOCKSOURCE_ACLK,
-				3,
-				0,
-				146,
-				EUSCI_A_UART_NO_PARITY,
-				EUSCI_A_UART_LSB_FIRST,
-				EUSCI_A_UART_ONE_STOP_BIT,
-				EUSCI_A_UART_MODE,
-				EUSCI_A_UART_LOW_FREQUENCY_BAUDRATE_GENERATION
-		};
-	EUSCI_A_UART_init(EUSCI_A0_BASE,&uart_a0_param);
-	EUSCI_A_UART_enable(EUSCI_A0_BASE);
-	EUSCI_A_UART_enableInterrupt(EUSCI_A0_BASE,EUSCI_A_UART_RECEIVE_INTERRUPT); // Enable interrupt
-		__enable_interrupt();
+    EUSCI_A_UART_initParam uart_a0_param = {
+        EUSCI_A_UART_CLOCKSOURCE_ACLK,
+        3,
+        0,
+        146,
+        EUSCI_A_UART_NO_PARITY,
+        EUSCI_A_UART_LSB_FIRST,
+        EUSCI_A_UART_ONE_STOP_BIT,
+        EUSCI_A_UART_MODE,
+        EUSCI_A_UART_LOW_FREQUENCY_BAUDRATE_GENERATION
+    };
+    EUSCI_A_UART_init(EUSCI_A0_BASE, &uart_a0_param);
+    EUSCI_A_UART_enable(EUSCI_A0_BASE);
+    EUSCI_A_UART_enableInterrupt(EUSCI_A0_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);    // Enable interrupt
+    __enable_interrupt();
 
-	bsp_pin_digital_write(&pins.uart_1w_sd_sel,HIGH);
+    bsp_pin_digital_write(&pins.uart_1w_sd_sel, HIGH);
 
-   return 1;
+    return 1;
 }
 
 //---------------------------------------------------------------------------
@@ -113,9 +113,9 @@ SMALLINT OpenCOM(int portnum, char *port_zstr)
 //
 void CloseCOM(int portnum)
 {
-	EUSCI_A_UART_disable(EUSCI_A0_BASE);
+    EUSCI_A_UART_disable(EUSCI_A0_BASE);
 
-	bsp_pin_digital_write(&pins.uart_1w_sd_sel,LOW);
+    bsp_pin_digital_write(&pins.uart_1w_sd_sel, LOW);
 }
 
 //---------------------------------------------------------------------------
@@ -126,7 +126,7 @@ void CloseCOM(int portnum)
 //
 void FlushCOM(int portnum)
 {
-   // add platform specific code here
+    // add platform specific code here
 }
 
 //--------------------------------------------------------------------------
@@ -141,18 +141,23 @@ void FlushCOM(int portnum)
 // Returns:  TRUE(1)  - success
 //           FALSE(0) - failure
 //
-SMALLINT WriteCOM(int portnum, int outlen, uchar *outbuf)
+SMALLINT WriteCOM(int portnum, int outlen, uchar * outbuf)
 {
-	uint16_t i;
-	for(i=0 ; i<outlen ; i++)
-	{
-		// Wait for the peripherial to be available
-		while (!EUSCI_A_UART_getInterruptStatus(EUSCI_A0_BASE,EUSCI_A_UART_TRANSMIT_INTERRUPT_FLAG));//while(!(UCA1IFG&UCTXIFG));
-		// Stuff byte into the tx reg
-		EUSCI_A_UART_transmitData(EUSCI_A0_BASE,outbuf[i]);//UCA1TXBUF = (unsigned char) _ptr[i];
-	}
+    uint16_t i;
 
-   return 1;
+    for (i = 0; i < outlen; i++)
+    {
+        // Wait for the peripherial to be available
+        while (!EUSCI_A_UART_getInterruptStatus(EUSCI_A0_BASE,
+                                                EUSCI_A_UART_TRANSMIT_INTERRUPT_FLAG))
+        {
+            ;                                                                                                //while(!(UCA1IFG&UCTXIFG));
+        }
+        // Stuff byte into the tx reg
+        EUSCI_A_UART_transmitData(EUSCI_A0_BASE, outbuf[i]);       //UCA1TXBUF = (unsigned char) _ptr[i];
+    }
+
+    return 1;
 }
 
 //--------------------------------------------------------------------------
@@ -166,34 +171,35 @@ SMALLINT WriteCOM(int portnum, int outlen, uchar *outbuf)
 //
 // Returns: number of characters read
 //
-int ReadCOM(int portnum, int inlen, uchar *inbuf)
+int ReadCOM(int portnum, int inlen, uchar * inbuf)
 {
 
+    while (g.rx_index < inlen)
+    {
+        ;
+    }
 
 
+    uint16_t i;
 
-	while(g.rx_index<inlen);
-
-
-	uint16_t i;
-	for(i=0 ; i<inlen ; i++)
-	{
-		inbuf[i]=g.rx_data[i];
-	}
-	g.rx_index = 0;
-	return i;
+    for (i = 0; i < inlen; i++)
+    {
+        inbuf[i] = g.rx_data[i];
+    }
+    g.rx_index = 0;
+    return i;
 }
 
 #pragma vector=USCI_A0_VECTOR
 __interrupt void USCI_A0_ISR(void)
 {
-	switch(__even_in_range(UCA0IV,USCI_UART_UCTXCPTIFG))
-	{
-		case USCI_UART_UCRXIFG:
-			g.rx_data[g.rx_index]=EUSCI_A_UART_receiveData(EUSCI_A0_BASE);
-			g.rx_index++;
-			break;
-	}
+    switch (__even_in_range(UCA0IV, USCI_UART_UCTXCPTIFG))
+    {
+        case USCI_UART_UCRXIFG:
+            g.rx_data[g.rx_index] = EUSCI_A_UART_receiveData(EUSCI_A0_BASE);
+            g.rx_index++;
+            break;
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -204,7 +210,7 @@ __interrupt void USCI_A0_ISR(void)
 //
 void BreakCOM(int portnum)
 {
-	EUSCI_A_UART_transmitBreak(EUSCI_A0_BASE);
+    EUSCI_A_UART_transmitBreak(EUSCI_A0_BASE);
 }
 
 //--------------------------------------------------------------------------
@@ -220,7 +226,7 @@ void BreakCOM(int portnum)
 //
 void SetBaudCOM(int portnum, int new_baud)
 {
-   // add platform specific code here
+    // add platform specific code here
 }
 
 //--------------------------------------------------------------------------
@@ -229,16 +235,18 @@ void SetBaudCOM(int portnum, int new_baud)
 //
 void msDelay(int len)
 {
-	int i = len;
-	for(;i>0;i--)
-	{
-		int j=65535;
-		for(;j>0;j--)
-		{
+    int i = len;
 
-		}
-	}
-   // add platform specific code here
+    for (; i > 0; i--)
+    {
+        int j = 65535;
+
+        for (; j > 0; j--)
+        {
+
+        }
+    }
+    // add platform specific code here
 }
 
 //--------------------------------------------------------------------------
@@ -247,8 +255,8 @@ void msDelay(int len)
 //
 long msGettick(void)
 {
-   static long tick =0;
-   return ++tick;
+    static long tick = 0;
+    return ++tick;
 }
 
 //--------------------------------------------------------------------------
@@ -257,13 +265,13 @@ long msGettick(void)
 // 'portnum'  - number 0 to MAX_PORTNUM-1.  This number was provided to
 //              OpenCOM to indicate the port number.
 //
-// Returns:  TRUE  if adapter is capable of delivering power. 
+// Returns:  TRUE  if adapter is capable of delivering power.
 //
 #if 0
 SMALLINT owHasPowerDelivery(int portnum)
 {
-   // add adapter specific code here
-   return TRUE;
+    // add adapter specific code here
+    return TRUE;
 }
 #endif
 //--------------------------------------------------------------------------
@@ -272,34 +280,34 @@ SMALLINT owHasPowerDelivery(int portnum)
 // 'portnum'  - number 0 to MAX_PORTNUM-1.  This number was provided to
 //              OpenCOM to indicate the port number.
 //
-// Returns:  TRUE  if adapter is capable of over drive. 
+// Returns:  TRUE  if adapter is capable of over drive.
 //
 #if 0
 SMALLINT owHasOverDrive(int portnum)
 {
-   // add adapter specific code here
-   return TRUE;
+    // add adapter specific code here
+    return TRUE;
 }
 #endif
 //--------------------------------------------------------------------------
-// This procedure creates a fixed 480 microseconds 12 volt pulse 
+// This procedure creates a fixed 480 microseconds 12 volt pulse
 // on the 1-Wire Net for programming EPROM iButtons.
 //
 // 'portnum'  - number 0 to MAX_PORTNUM-1.  This number was provided to
 //              OpenCOM to indicate the port number.
 //
 // Returns:  TRUE  program volatage available
-//           FALSE program voltage not available  
+//           FALSE program voltage not available
 #if 0
 SMALLINT owHasProgramPulse(int portnum)
 {
-   // add adapter specific code here
-   return TRUE;
+    // add adapter specific code here
+    return TRUE;
 }
 #endif
 //--------------------------------------------------------------------------
 // Send 8 bits of communication to the 1-Wire Net and verify that the
-// 8 bits read from the 1-Wire Net is the same (write operation).  
+// 8 bits read from the 1-Wire Net is the same (write operation).
 // The parameter 'sendbyte' least significant 8 bits are used.  After the
 // 8 bits are sent change the level of the 1-Wire net.
 //
@@ -308,22 +316,28 @@ SMALLINT owHasProgramPulse(int portnum)
 // 'sendbyte' - 8 bits to send (least significant byte)
 //
 // Returns:  TRUE: bytes written and echo was the same
-//           FALSE: echo was not the same 
+//           FALSE: echo was not the same
 //
 #if 0
 SMALLINT owWriteBytePower(int portnum, SMALLINT sendbyte)
 {
-   // replace if platform has better implementation (faster response)
-   if (!hasPowerDelivery(portnum))
-      return FALSE;
-   
-   if(owTouchByte(portnum,sendbyte) != sendbyte)
-      return FALSE;
+    // replace if platform has better implementation (faster response)
+    if (!hasPowerDelivery(portnum))
+    {
+        return FALSE;
+    }
 
-   if(owLevel(portnum,MODE_STRONG5) != MODE_STRONG5)
-      return FALSE;
+    if (owTouchByte(portnum, sendbyte) != sendbyte)
+    {
+        return FALSE;
+    }
 
-   return TRUE;
+    if (owLevel(portnum, MODE_STRONG5) != MODE_STRONG5)
+    {
+        return FALSE;
+    }
+
+    return TRUE;
 }
 #endif
 
@@ -336,7 +350,7 @@ SMALLINT owWriteBytePower(int portnum, SMALLINT sendbyte)
 // 'portnum'  - number 0 to MAX_PORTNUM-1.  This number was provided to
 //              OpenCOM to indicate the port number.
 // 'applyPowerResponse' - 1 bit response to check, if correct then start
-//                        power delivery 
+//                        power delivery
 //
 // Returns:  TRUE: bit written and response correct, strong pullup now on
 //           FALSE: response incorrect
@@ -344,16 +358,22 @@ SMALLINT owWriteBytePower(int portnum, SMALLINT sendbyte)
 #if 0
 SMALLINT owReadBitPower(int portnum, SMALLINT applyPowerResponse)
 {
-   // replace if platform has better implementation (faster response)
-   if (!hasPowerDelivery(portnum))
-      return FALSE;
+    // replace if platform has better implementation (faster response)
+    if (!hasPowerDelivery(portnum))
+    {
+        return FALSE;
+    }
 
-   if(owTouchBit(portnum,0x01) != applyPowerResponse)
-      return FALSE;
+    if (owTouchBit(portnum, 0x01) != applyPowerResponse)
+    {
+        return FALSE;
+    }
 
-   if(owLevel(portnum,MODE_STRONG5) != MODE_STRONG5)
-      return FALSE;
+    if (owLevel(portnum, MODE_STRONG5) != MODE_STRONG5)
+    {
+        return FALSE;
+    }
 
-   return TRUE;
+    return TRUE;
 }
 #endif
