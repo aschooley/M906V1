@@ -82,22 +82,6 @@ void drv_rtc_set_time_date(rtc_t * set_time);
  */
 rtc_t drv_rtc_read_time_date(void);
 
-/**
- * Unpack a rtc struct into a BCD encoded array.
- * @param[in] structure to convert.
- * @param[out] array to put the values into.
- * @retval[true] array size was large enough, conversion done.
- * @retfal[false] array size was not sufficient, conversion aborted.
- */
-bool drv_rtc_convert_struct_to_array(rtc_t * structure, uint8_t * bcd_array, uint8_t array_sz);
-
-/**
- * Unpack a BCD encoded array into a rtc struct.
- * @param[in] array to convert.
- * @param[out] structure to put the converted values into.
- */
-void drv_rtc_convert_array_to_struct(uint8_t * bcd_array, rtc_t * structure);
-
 // *****************************************************************************
 // Public inline function definitions
 // *****************************************************************************

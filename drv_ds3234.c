@@ -43,6 +43,22 @@ static const uint8_t BCD_ARRAY_SIZE = 7;
 // Private static function and ISR prototypes
 // *****************************************************************************
 
+/**
+ * Unpack a rtc struct into a BCD encoded array.
+ * @param[in] structure to convert.
+ * @param[out] array to put the values into.
+ * @retval[true] array size was large enough, conversion done.
+ * @retfal[false] array size was not sufficient, conversion aborted.
+ */
+bool drv_rtc_convert_struct_to_array(rtc_t * structure, uint8_t * bcd_array, uint8_t array_sz);
+
+/**
+ * Unpack a BCD encoded array into a rtc struct.
+ * @param[in] array to convert.
+ * @param[out] structure to put the converted values into.
+ */
+void drv_rtc_convert_array_to_struct(uint8_t * bcd_array, rtc_t * structure);
+
 // *****************************************************************************
 // Private inline function definitions
 // *****************************************************************************
@@ -88,53 +104,6 @@ void drv_rtc_init(void){
 }
 
 void drv_rtc_set_time_date(rtc_t * set_time){
-#if 0
-	// Array to hold the date and time bytes.
-	uint8_t TimeDate [7]={
-							set_time.second,
-							set_time.minute,
-							set_time.hour,
-							0,
-							set_time.day,
-							set_time.month,
-							set_time.year
-						 };
-	// Create an iterator.
-	uint8_t i;
-	// Loop through the Array and send them to the RTC chip.
-	for(i=0; i<=6;i++){
-		// Skip over the third element, this is the day of the week register.
-		// we don't use it. 
-		if(i==3)
-		{
-			i++;
-		}
-		// Convert the number to a BCD.
-		uint8_t tens= TimeDate[i]/10;
-		uint8_t ones= TimeDate[i]-b*10;
-		// If we are setting the hour this loop, handle 24 hours properly.
-		if(i==2){
-			if (tens==2)
-				tens=0b00000010;
-			else if (b==1)
-				tens=0b00000001;
-		}
-		// Write back the BCD value over the unit8.
-		TimeDate[i]= ones+(tens<<4);
-
-		// Select the RTC chip on the SPI bus. 
-		bsp_pin_digital_write(&pins.rtc_cs,ENABLED);
-		// When the SPI port is available, set the addres to write to.
-		while(EUSCI_B_SPI_isBusy(EUSCI_B0_BASE));
-		EUSCI_B_SPI_transmitData(EUSCI_B0_BASE ,i+0x80);
-		// When the SPI port is available, write the data.
-		while(EUSCI_B_SPI_isBusy(EUSCI_B0_BASE));
-		EUSCI_B_SPI_transmitData(EUSCI_B0_BASE ,TimeDate[i]);
-		// Deselect the RTC chip.
-		bsp_pin_digital_write(&pins.rtc_cs,DISABLED);
-	} // end for loop
-#endif
-
 	uint8_t set_time_array[BCD_ARRAY_SIZE];
 	drv_rtc_convert_struct_to_array(set_time,set_time_array,BCD_ARRAY_SIZE);
 
@@ -157,80 +126,7 @@ void drv_rtc_set_time_date(rtc_t * set_time){
 }
 
 rtc_t drv_rtc_read_time_date(void){
-#if 0
-	// Create an array to hold the RTC data when read in from the chip.
-	uint8_t TimeDate [7]; //second,minute,hour,null,day,month,year
-	// Create an iterator.
-	uint8_t i;
-	// Loop through the RTC registers and read out the date and time.
-	for( i=0; i<=6;i++){
-		// Skip the day of the week register, we don't use it.
-		if(i==3)
-		{
-			i++;
-		}
-		// Enable the RTC chip on the SPI bus.
-		bsp_pin_digital_write(&pins.rtc_cs,ENABLED);
-		// When the SPI port is available, select the address to read.
-		while(EUSCI_B_SPI_isBusy(EUSCI_B0_BASE));
-		EUSCI_B_SPI_transmitData(EUSCI_B0_BASE ,i+0x00);
-		// When the SPI port is available, shift out don't care bits to shift
-		// in the register we want to read.
-		while(EUSCI_B_SPI_isBusy(EUSCI_B0_BASE));
-		EUSCI_B_SPI_transmitData(EUSCI_B0_BASE ,0x00);
-		// Once the transaction is complete retrieve the value shifted in.
-		while(EUSCI_B_SPI_isBusy(EUSCI_B0_BASE));
-		uint8_t rtc_data_byte = EUSCI_B_SPI_receiveData(EUSCI_B0_BASE);
-		
-		// Deselect the RTC chip.
-		bsp_pin_digital_write(&pins.rtc_cs,DISABLED);
 
-		// Lets decode the BCD encoded byte we got from the RTC chip.
-		// Extract the 10^0 position.
-		uint8_t ones=rtc_data_byte & 0b00001111;
-
-		// If this is the time byte.
-		if(i==2){
-			// Handle 24 hour mode.
-			uint8_t tens=(rtc_data_byte & 0b00110000)>>4;
-			if(tens==0b00000010)
-				tens=20;
-			else if(tens==0b00000001)
-				tens=10;
-			TimeDate[i]=ones+tens;
-		}
-		// Handle the day.
-		else if(i==4){
-			uint8_t tens=(rtc_data_byte & 0b00110000)>>4;
-			TimeDate[i]=ones+tens*10;
-		}
-		// Handle the month.
-		else if(i==5){
-			uint8_t tens=(rtc_data_byte & 0b00010000)>>4;
-			TimeDate[i]=ones+tens*10;
-		}
-		// Handle the year.
-		else if(i==6){
-			uint8_t tens=(rtc_data_byte & 0b11110000)>>4;
-			TimeDate[i]=ones+tens*10;
-		}
-		// Handle minutes and seconds.
-		else{
-			uint8_t tens=(rtc_data_byte & 0b01110000)>>4;
-			TimeDate[i]=ones+tens*10;
-			}
-	}
-	// Create a RTC struct and stuff it witht the converted bytes from the array.
-	rtc_t current_time;
-	current_time.second = TimeDate[0];
-	current_time.minute = TimeDate[1];
-	current_time.hour   = TimeDate[2];
-	current_time.day    = TimeDate[4];
-	current_time.month  = TimeDate[5];
-	current_time.year   = TimeDate[6];
-
-  return(current_time);
-#endif
 	// Create an array to hold the RTC data when read in from the chip.
 	uint8_t TimeDate [7]; //second,minute,hour,null,day,month,year
 
@@ -327,23 +223,6 @@ void drv_rtc_convert_array_to_struct(uint8_t * bcd_array, rtc_t * structure)
 		{
 			i++;
 		}
-//		// Enable the RTC chip on the SPI bus.
-//		bsp_pin_digital_write(&pins.rtc_cs,ENABLED);
-//		// When the SPI port is available, select the address to read.
-//		while(EUSCI_B_SPI_isBusy(EUSCI_B0_BASE));
-//		EUSCI_B_SPI_transmitData(EUSCI_B0_BASE ,i+0x00);
-//		// When the SPI port is available, shift out don't care bits to shift
-//		// in the register we want to read.
-//		while(EUSCI_B_SPI_isBusy(EUSCI_B0_BASE));
-//		EUSCI_B_SPI_transmitData(EUSCI_B0_BASE ,0x00);
-//		// Once the transaction is complete retrieve the value shifted in.
-//		while(EUSCI_B_SPI_isBusy(EUSCI_B0_BASE));
-//		uint8_t rtc_data_byte = EUSCI_B_SPI_receiveData(EUSCI_B0_BASE);
-//
-//		// Deselect the RTC chip.
-//		bsp_pin_digital_write(&pins.rtc_cs,DISABLED);
-
-
 		// Lets decode the BCD encoded byte we got from the RTC chip.
 		// Extract the 10^0 position.
 		uint8_t ones=bcd_array[i] & 0b00001111;
