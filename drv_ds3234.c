@@ -204,7 +204,6 @@ bool drv_rtc_convert_struct_to_array(rtc_t * structure, uint8_t * bcd_array,
         // Loop through the Array and send them to the RTC chip.
         for (i = 0; i <= 6; i++)
         {
-
             switch (i)
             {
                 case 0:
