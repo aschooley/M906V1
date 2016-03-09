@@ -68,7 +68,6 @@ void bsp_pin_set_mode (const pin_t * const pin, pin_type_t type);
  */
 void bsp_pin_digital_write (const pin_t * const pin, pin_state_t state);
 
-
 /**
  * Toggles a digial output pin.  Will xor its state.  High -> low, low -> high.
  * @param[in] pin to toggle.

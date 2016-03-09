@@ -42,15 +42,29 @@
 // *****************************************************************************
 // Private static function and ISR prototypes
 // *****************************************************************************
+
+/**
+ * Get the time from the RTC.
+ * @param[out]buffer to hold the time and date in ascii.
+ * @param[in] size of the buffer.
+ */
 void get_time (char * const buffer, const uint8_t buff_sz);
 
+/**
+ * On error event print msg to trace port.
+ */
 void error_logger_log (const char * msg);
 
+/**
+ * On trace event printmsg to the trace port.
+ */
 void trace_logger_log (const char * msg);
 
+/**
+ * On info event print msg to the trace port and also to the data port.
+ */
 void info_logger_log (const char * msg);
 
-void init_uart (void);
 // *****************************************************************************
 // Private inline function definitions
 // *****************************************************************************
@@ -84,7 +98,7 @@ void get_time(char * const buffer, const uint8_t buff_sz)
 }
 void error_logger_log (const char * msg)
 {
-    fputs("%s", msg);
+	fputs(msg, 0);
 }
 void trace_logger_log (const char * msg)
 {

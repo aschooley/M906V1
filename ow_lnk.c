@@ -126,7 +126,7 @@ void CloseCOM(int portnum)
 //
 void FlushCOM(int portnum)
 {
-    // add platform specific code here
+    g.rx_index = 0;
 }
 
 //--------------------------------------------------------------------------

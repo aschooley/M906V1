@@ -38,8 +38,8 @@ static const RX_DATA_BUFF_SZ = 200;
 
 volatile static struct
 {
-    char    rx_data[RX_DATA_BUFF_SZ];
-    uint8_t rx_index;
+    char    rx_1_data[RX_DATA_BUFF_SZ];
+    uint8_t rx_1_index;
     bool    msg_rdy;
 } g;
 
@@ -99,7 +99,7 @@ void init_uart(void)
     EUSCI_A_UART_init(EUSCI_A1_BASE, &uart_a1_param);
     EUSCI_A_UART_enable(EUSCI_A1_BASE);
     g.msg_rdy  = false;
-    g.rx_index = 0;
+    g.rx_1_index = 0;
     EUSCI_A_UART_enableInterrupt(EUSCI_A1_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);    // Enable interrupt
 
 
@@ -140,7 +140,7 @@ uint8_t trace_msg_recieved(void)
 
     if (g.msg_rdy)
     {
-        retval = g.rx_index;
+        retval = g.rx_1_index;
     }
     return (retval);
 }
@@ -149,16 +149,16 @@ bool read_trace_msg(char * buffer, uint8_t buff_sz)
 {
     bool retval = false;
 
-    if (g.rx_index <= buff_sz)
+    if (g.rx_1_index <= buff_sz)
     {
-        const uint8_t bytes_copied = strncpy(buffer, g.rx_data, RX_DATA_BUFF_SZ);
+        const uint8_t bytes_copied = strncpy(buffer, g.rx_1_data, RX_DATA_BUFF_SZ);
 
-        if (g.rx_index == bytes_copied)
+        if (g.rx_1_index == bytes_copied)
         {
             retval = true;
         }
         g.msg_rdy  = false;
-        g.rx_index = 0;
+        g.rx_1_index = 0;
 
         EUSCI_A_UART_enableInterrupt(EUSCI_A1_BASE,
                                      EUSCI_A_UART_RECEIVE_INTERRUPT);                       // Enable interrupt
@@ -220,22 +220,20 @@ __interrupt void USCI_A1_ISR(void)
     switch (__even_in_range(UCA1IV, USCI_UART_UCTXCPTIFG))
     {
         case USCI_UART_UCRXIFG:
-            g.rx_data[g.rx_index] = EUSCI_A_UART_receiveData(EUSCI_A1_BASE);
+            g.rx_1_data[g.rx_1_index] = EUSCI_A_UART_receiveData(EUSCI_A1_BASE);
 
-            if (10 == g.rx_data[g.rx_index])
+            if (10 == g.rx_1_data[g.rx_1_index])
             {
                 EUSCI_A_UART_disableInterrupt(EUSCI_A1_BASE,
                                               EUSCI_A_UART_RECEIVE_INTERRUPT);
                 g.msg_rdy = true;
-                g.rx_index++;
-                g.rx_data[g.rx_index] = 0;
+                g.rx_1_index++;
+                g.rx_1_data[g.rx_1_index] = 0;
             }
-            else if (RX_DATA_BUFF_SZ - 1 > g.rx_index)
+            else if (RX_DATA_BUFF_SZ - 1 > g.rx_1_index)
             {
-                g.rx_index++;
+                g.rx_1_index++;
             }
-
-
             break;
     }
 }

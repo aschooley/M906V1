@@ -46,7 +46,7 @@ void logger_init (void);
  * Logs a message.
  * @param[in] msg the message to log; OK if NULL
  */
-void trace_logger_log (const char * const msg);
+//void trace_logger_log (const char * const msg);
 
 // *****************************************************************************
 // Public inline function definitions

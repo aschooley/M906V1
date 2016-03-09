@@ -147,6 +147,32 @@ static void report_1_wire_devices(void)
     bsp_pin_digital_write(&pins.uart_1w_sd_sel, LOW);
 }
 
+void check_for_trace_msg(void)
+{
+	// Check if a msg was recieved on the trace port.
+	uint8_t got_msg = trace_msg_recieved();
+	// If a message came in handle it.
+	if (0 != got_msg)
+	{
+		uint8_t tmp_buf[100];
+		read_trace_msg(tmp_buf, 100);
+		logf(TRACE, "string rx: %s", tmp_buf);
+		// 't' is used to set the time, format t y mo d h mi s \r\n
+		if ('t' == tmp_buf[0])
+		{
+			rtc_t set_time;
+			sscanf(
+				tmp_buf,
+				"%*s %" SCNu8 "%" SCNu8 "%" SCNu8 "%" SCNu8 "%" SCNu8 "%"
+				SCNu8,
+				&set_time.year, &set_time.month, &set_time.day,
+				&set_time.hour,
+				&set_time.minute, &set_time.second );
+			drv_rtc_set_time_date(&set_time);
+		}
+	}
+}
+
 int main(void)
 {
     WDTCTL   = WDTPW | WDTHOLD;             // Stop watchdog timer
@@ -157,23 +183,77 @@ int main(void)
 
     Init_Clock();
     logger_init();
-
     bsp_pins_initalize();
-
     drv_rtc_init();
 
+    bsp_pin_digital_write(&pins.led_power_en, ENABLED);
 
 
+    for(;;)
+    {
+    	static uint8_t running = 2;
+
+    	if(pins.power_down.enabled_state ==
+ 	           bsp_pin_digital_read(&pins.power_down))
+    	{
+    		if(0!=running)
+    		{
+				// Shutting down the sd card.
+				bsp_pin_digital_write(&pins.logger_rst, ENABLED);
+				bsp_pin_digital_write(&pins.sd_pwr_en, DISABLED);
+				bsp_pin_digital_write(&pins.uart_1w_sd_sel, HIGH);
+				// Indicate that we are all shut down now.
+				running = 0;
+				// Turn off all lights but #4
+				bsp_pin_digital_write(&pins.led_1,DISABLED);
+				bsp_pin_digital_write(&pins.led_2,DISABLED);
+				bsp_pin_digital_write(&pins.led_3,DISABLED);
+				bsp_pin_digital_write(&pins.led_4,ENABLED);
+    		}
+    	}
+    	else
+    	{
+    		if(1!=running)
+    		{
+    			bsp_pin_digital_write(&pins.sd_pwr_en, ENABLED);
+				bsp_pin_digital_write(&pins.logger_rst, DISABLED);
+				bsp_pin_digital_write(&pins.uart_1w_sd_sel, LOW);
+
+				report_1_wire_devices();
 
 
+				bsp_pin_digital_write(&pins.led_1,DISABLED);
+				bsp_pin_digital_write(&pins.led_2,DISABLED);
+				bsp_pin_digital_write(&pins.led_3,DISABLED);
+				bsp_pin_digital_write(&pins.led_4,DISABLED);
 
-    //day(1-31), month(1-12), year(0-99), hour(0-23), minute(0-59), second(0-59)
-    //rtc_ds3234_t set_time = {4,3,16,1,30,00};
-    //drv_rtc_set_time_date(set_time);
+	    		running = 1;
+    		}
 
-    bsp_pin_digital_write(&pins.sd_pwr_en, ENABLED);
-    bsp_pin_digital_write(&pins.logger_rst, DISABLED);
-    bsp_pin_digital_write(&pins.uart_1w_sd_sel, LOW);
+    		volatile uint32_t i;            // volatile to prevent optimization
+			static uint32_t   loop_counter = 0;
+
+			trace("loop counter", loop_counter++);
+			cout_data_channel("out data /r/n");
+
+			// Blink to konw we are running
+			bsp_pin_digital_toggle(&pins.led_1);
+
+			// Check if any messages came in on the trace port.
+			check_for_trace_msg();
+
+			// Delay
+			i = 500000;
+			do
+			{
+				i--;
+			}
+			while (i != 0);
+
+    	}
+    }
+
+
 
     while (pins.power_down.enabled_state ==
            bsp_pin_digital_read(&pins.power_down))
@@ -187,31 +267,6 @@ int main(void)
 
     report_1_wire_devices();
 
-#if 0
-    #define MAXDEVICES 10
-    struct
-    {
-        int     portnum;
-        int     NumDevices;
-        uint8_t AllSN[MAXDEVICES][8];
-    } ow;
-    ow.portnum    = owAcquire(0, "");
-    ow.NumDevices = 0;
-
-    do
-    {
-        // perform the search
-        if (!owNext(ow.portnum, TRUE, FALSE))
-        {
-            break;
-        }
-
-        owSerialNum(ow.portnum, ow.AllSN[ow.NumDevices], TRUE);
-        ow.NumDevices++;
-    }
-    while (ow.NumDevices < (MAXDEVICES - 1));
-
-#endif
 
     for (;;)
     {

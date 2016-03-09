@@ -40,15 +40,32 @@ extern "C" {
 // *****************************************************************************
 
 
+/**
+ * Initalize the uarts on the processor.
+ */
+void init_uart (void);
+
+/**
+ * Print string to the data port.
+ */
 int cout_data_channel (const char * _ptr);
 
 /**
  * Return how many bytes are in a message if a complete message hase been
  * recieved on the trace port.
+ * @return number of bytes in waiting msg.
  */
 uint8_t trace_msg_recieved (void);
 
+/**
+ * Read out the waiting message into a buffer.
+ * @param[out] buffer to copy the msg into.
+ * @param[in] buff_sz is the size of the buffer.
+ * @retval true buffer size is big enough.
+ * @retval false buffer size is not big enough, copy aborted.
+ */
 bool read_trace_msg (char * buffer, uint8_t buff_sz);
+
 
 // *****************************************************************************
 // Public inline function definitions
