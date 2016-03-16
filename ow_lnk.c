@@ -126,7 +126,7 @@ void CloseCOM(int portnum)
 //
 void FlushCOM(int portnum)
 {
-    g.rx_index = 0;
+    flush_data_buffer();
 }
 
 //--------------------------------------------------------------------------
@@ -173,34 +173,45 @@ SMALLINT WriteCOM(int portnum, int outlen, uchar * outbuf)
 //
 int ReadCOM(int portnum, int inlen, uchar * inbuf)
 {
+    uint16_t timeout = 65535;
+    int      retval  = 0;
 
-    while (g.rx_index < inlen)
+    while (data_msg_size() < inlen && 0 < timeout)
     {
-        ;
+        volatile uint16_t i = 65535;
+
+        for (; i > 0; i--)
+        {
+            ;
+        }
+        timeout--;
     }
 
-
-    uint16_t i;
-
-    for (i = 0; i < inlen; i++)
+    if (0 < timeout)
     {
-        inbuf[i] = g.rx_data[i];
+        read_data_msg(inbuf, inlen);
+        retval = inlen;
     }
-    g.rx_index = 0;
-    return i;
+
+    return (retval);
+
+//    while (g.rx_index < inlen)
+//    {
+//        ;
+//    }
+//
+//
+//    uint16_t i;
+//
+//    for (i = 0; i < inlen; i++)
+//    {
+//        inbuf[i] = g.rx_data[i];
+//    }
+//    g.rx_index = 0;
+//    return i;
 }
 
-#pragma vector=USCI_A0_VECTOR
-__interrupt void USCI_A0_ISR(void)
-{
-    switch (__even_in_range(UCA0IV, USCI_UART_UCTXCPTIFG))
-    {
-        case USCI_UART_UCRXIFG:
-            g.rx_data[g.rx_index] = EUSCI_A_UART_receiveData(EUSCI_A0_BASE);
-            g.rx_index++;
-            break;
-    }
-}
+
 
 //--------------------------------------------------------------------------
 // Send a break on the com port for at least 2 ms

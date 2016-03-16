@@ -98,7 +98,7 @@ void get_time(char * const buffer, const uint8_t buff_sz)
 }
 void error_logger_log (const char * msg)
 {
-	fputs(msg, 0);
+    fputs(msg, 0);
 }
 void trace_logger_log (const char * msg)
 {

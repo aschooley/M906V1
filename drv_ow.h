@@ -1,8 +1,8 @@
-#ifndef BSP_UART_H
-#define BSP_UART_H
+#ifndef DRV_OW_H
+#define DRV_OW_H
 
 /**
- * @file bsp_uart.h
+ * @file drv_ow.h
  * @brief
  * @details
  * @copyright COPYRIGHT NOTICE: (c) 2016 NASA Ames Research Center
@@ -31,6 +31,9 @@ extern "C" {
 // Public data type definitions (enum, struct, typedef, union)
 // *****************************************************************************
 
+/** A 1-wire ID is an array of 8 bytes. */
+typedef uint8_t one_wire_id_t[8];
+
 // *****************************************************************************
 // Public constant definitions
 // *****************************************************************************
@@ -40,34 +43,18 @@ extern "C" {
 // *****************************************************************************
 
 
-/**
- * Initalize the uarts on the processor.
- */
-void init_uart (void);
+void convert_id_to_string (char * buff, one_wire_id_t id);
 
-/**
- * Print string to the data port.
- */
-int cout_data_channel (const char * _ptr);
+void report_1_wire_devices (void);
 
-/**
- * Return how many bytes are in a message if a complete message hase been
- * recieved on the trace port.
- * @return number of bytes in waiting msg.
- */
-uint8_t trace_msg_recieved (void);
+uint8_t drv_ow_get_dev_cnt (void);
 
-/**
- * Read out the waiting message into a buffer.
- * @param[out] buffer to copy the msg into.
- * @param[in] buff_sz is the size of the buffer.
- * @retval true buffer size is big enough.
- * @retval false buffer size is not big enough, copy aborted.
- */
-bool read_trace_msg (char * buffer, uint8_t buff_sz);
 
-bool read_data_msg (char * buffer, uint8_t buff_sz);
+uint8_t drv_ow_get_dev_cnt (void);
 
+bool drv_ow_get_id ( one_wire_id_t * id, uint8_t dev);
+bool drv_ow_get_contents (char * buff, uint8_t buff_sz, uint8_t dev);
+uint8_t drv_ow_get_m906_sn (void);
 // *****************************************************************************
 // Public inline function definitions
 // *****************************************************************************
@@ -76,4 +63,4 @@ bool read_data_msg (char * buffer, uint8_t buff_sz);
 }
 #endif
 
-#endif // BSP_UART_H
+#endif // DRV_OW_H

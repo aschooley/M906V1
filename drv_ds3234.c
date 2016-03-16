@@ -128,6 +128,7 @@ void drv_rtc_set_time_date(rtc_t * set_time)
     EUSCI_B_SPI_transmitData(EUSCI_B0_BASE, 0x80);
 
     uint8_t i;
+
     for ( i = 0; i < BCD_ARRAY_SIZE; i++)
     {
         // When the SPI port is available, write the data.

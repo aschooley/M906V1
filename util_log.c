@@ -151,7 +151,7 @@ void util_log(util_log_level_t const level,
             }
             else if (INFO == level)
             {
-            	(g.info_log_function)(out_msg);
+                (g.info_log_function)(out_msg);
             }
             else
             {
