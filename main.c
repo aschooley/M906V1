@@ -19,6 +19,7 @@
 #include "util_log.h"
 #include "drv_ds3234.h"
 #include "bsp_uart.h"
+#include "do_stuff.h"
 // Internal library header files
 #include "ow/ownet.h"
 #include "ow/mbnv.h"
@@ -151,9 +152,9 @@ void openlogger_start(void)
 }
 void openlogger_stop(void)
 {
-	// will close out the current file
-	openlogger_got_to_cmd_mode();
-	sw_delay(10);
+    // will close out the current file
+    openlogger_got_to_cmd_mode();
+    sw_delay(10);
     // Shutting down the sd card.
     bsp_pin_digital_write(&pins.logger_rst, ENABLED);
     bsp_pin_digital_write(&pins.sd_pwr_en, DISABLED);
@@ -198,7 +199,7 @@ openlogger_status_t openlogger_get_startup_msg(void)
 
         if (openlogger_got_to_cmd_mode())
         {
-        	retval = IN_CMD_MODE;
+            retval = IN_CMD_MODE;
         }
     }
     else if ('>' == next_char && retval == STATUS_NO_STATUS)
@@ -365,9 +366,11 @@ bool openlogger_got_to_cmd_mode(void)
     cout_data_channel(command);
     sw_delay(10);
 
-    while (0 == data_msg_size())
+    uint16_t timeout = 0;
+
+    while (0 == data_msg_size() && timeout != sizeof(uint16_t))
     {
-        ;
+        timeout++;
     }
     const uint8_t rx_buff_sz = 40;
     char          rx_buff[rx_buff_sz];
@@ -407,6 +410,8 @@ int main(void)
         {
             if (0 != running)
             {
+                do_stuff_shutdown();
+
                 openlogger_stop();
                 // Indicate that we are all shut down now.
                 running = 0;
@@ -425,7 +430,7 @@ int main(void)
 
                 openlogger_start();
 
-                bsp_pin_digital_write(&pins.led_1, DISABLED);
+                bsp_pin_digital_write(&pins.led_1, ENABLED);
                 bsp_pin_digital_write(&pins.led_2, DISABLED);
                 bsp_pin_digital_write(&pins.led_3, DISABLED);
                 bsp_pin_digital_write(&pins.led_4, DISABLED);
@@ -491,15 +496,17 @@ int main(void)
                     if (success)
                     {
                         success = openlogger_append(file_name, ".csv");
+
+                        do_stuff_init();
                     }
 
                     if (success)
                     {
-                    	// Turn on led 2 to inicate that everything is okay.
-                    	bsp_pin_digital_write(&pins.led_2, ENABLED);
+                        // Turn on led 2 to inicate that everything is okay.
+                        bsp_pin_digital_write(&pins.led_2, ENABLED);
                     }
-                    else
-                    {	// Turn on the third led to indicate a problem.
+                    else // Turn on the third led to indicate a problem.
+                    {
                         bsp_pin_digital_write(&pins.led_3, ENABLED);
                         log(ERROR, "File system could not initalize")
                     }
@@ -509,15 +516,11 @@ int main(void)
 
             if (1 == running)
             {
-                volatile uint32_t i;                            // volatile to prevent optimization
-                static uint32_t   loop_counter = 0;
-                const uint8_t     comm_buff_sz = 130;
-                char              comm_buff[comm_buff_sz];
+                const uint8_t comm_buff_sz = 130;
+                char          comm_buff[comm_buff_sz];
 
-                trace("loop counter", loop_counter++);
-                snprintf(comm_buff, comm_buff_sz, "loop counter %d \r\n",
-                         loop_counter);
-                cout_data_channel(comm_buff);
+                do_stuff();
+
 
                 // Blink to konw we are running
                 bsp_pin_digital_toggle(&pins.led_1);
@@ -525,69 +528,10 @@ int main(void)
                 // Check if any messages came in on the trace port.
                 check_for_trace_msg();
 
-                sw_delay(10);
+                sw_delay(3);
             }
 
         }
-    }
-
-    while (pins.power_down.enabled_state ==
-           bsp_pin_digital_read(&pins.power_down))
-    {
-        ;
-    }
-
-
-    log(TRACE, "initalized");
-
-
-    report_1_wire_devices();
-
-    for (;;)
-    {
-        volatile uint32_t i;            // volatile to prevent optimization
-        static uint32_t   loop_counter = 0;
-
-        if (pins.power_down.enabled_state ==
-            bsp_pin_digital_read(&pins.power_down))
-        {
-            bsp_pin_digital_write(&pins.led_power_en, DISABLED);
-        }
-        else
-        {
-            bsp_pin_digital_write(&pins.led_power_en, ENABLED);
-        }
-        trace("loop counter", loop_counter++);
-        cout_data_channel("out data /r/n");
-
-        bsp_pin_digital_toggle(&pins.led_1);
-
-        uint8_t got_msg = trace_msg_recieved();
-
-        if (0 != got_msg)
-        {
-            uint8_t tmp_buf[100];
-            read_trace_msg(tmp_buf, 100);
-            logf(TRACE, "string rx: %s", tmp_buf);
-
-            if ('t' == tmp_buf[0])
-            {
-                rtc_t set_time;
-                sscanf(
-                    tmp_buf,
-                    "%*s %" SCNu8 "%" SCNu8 "%" SCNu8 "%" SCNu8 "%" SCNu8 "%"
-                    SCNu8,
-                    &set_time.year, &set_time.month, &set_time.day,
-                    &set_time.hour,
-                    &set_time.minute, &set_time.second );
-                drv_rtc_set_time_date(&set_time);
-            }
-
-
-
-        }
-
-        sw_delay(10);
     }
 
     return 0;

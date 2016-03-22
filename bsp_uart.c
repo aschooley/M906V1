@@ -14,6 +14,7 @@
 // Internal library header files
 #include "bsp_pins.h"
 #include "bsp_pins_conf.h"
+#include "util_log.h"
 // Third-party library header files
 #include <driverlib.h>
 // Standard library header files
@@ -139,6 +140,9 @@ int cout_data_channel(const char * _ptr)
         // Stuff byte into the tx reg
         EUSCI_A_UART_transmitData(EUSCI_A0_BASE, _ptr[i]);       //UCA1TXBUF = (unsigned char) _ptr[i];
     }
+
+
+    logf(TRACE, "written to card: %s", _ptr);
 
     // Return the number of bytes sent
     return len;
