@@ -220,6 +220,14 @@ void do_stuff(void)
         bsp_pin_digital_write(&pins.led_power_en, DISABLED);
         bsp_pin_digital_write(&pins.stack_power_en, ENABLED);
 
+
+        unsigned int i;
+
+        for (i=65535; i>0 ; i--)
+        {
+
+        }
+
         //Calendar run_time = RTC_C_getCalendarTime(RTC_C_BASE);
 
         //printf("%d,%d,%d",run_time.DayOfWeek,run_time.Hours,run_time.Minutes);
@@ -235,7 +243,6 @@ void do_stuff(void)
 
         taos_set_current_well(0);
 
-        unsigned char i;
 
         for (i = 1; i <= taos_max_well_number; i++)
         {

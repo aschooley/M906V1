@@ -84,13 +84,13 @@ void Init_Clock()
         );
 
     // Set DCO frequency to default 8MHz
-    //CS_setDCOFreq(CS_DCORSEL_0, CS_DCOFSEL_6);
+    CS_setDCOFreq(CS_DCORSEL_0, CS_DCOFSEL_6);
 
     // Configure MCLK and SMCLK to 8MHz
-    //CS_initClockSignal(CS_MCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1);
-    //CS_initClockSignal(CS_SMCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1);
-    CS_initClockSignal(CS_MCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
-    CS_initClockSignal(CS_SMCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
+    CS_initClockSignal(CS_MCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1);
+    CS_initClockSignal(CS_SMCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1);
+    //CS_initClockSignal(CS_MCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
+    //CS_initClockSignal(CS_SMCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
 
     // Intializes the XT1 crystal oscillator
     CS_turnOnLFXT(CS_LFXT_DRIVE_3);
