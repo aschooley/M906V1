@@ -85,15 +85,15 @@ volatile static struct
 SMALLINT OpenCOM(int portnum, char * port_zstr)
 {
     EUSCI_A_UART_initParam uart_a0_param = {
-        EUSCI_A_UART_CLOCKSOURCE_ACLK,
-        3,
-        0,
-        146,
-        EUSCI_A_UART_NO_PARITY,
-        EUSCI_A_UART_LSB_FIRST,
-        EUSCI_A_UART_ONE_STOP_BIT,
-        EUSCI_A_UART_MODE,
-        EUSCI_A_UART_LOW_FREQUENCY_BAUDRATE_GENERATION
+		EUSCI_A_UART_CLOCKSOURCE_SMCLK,
+		52,
+		1,
+		73,
+		EUSCI_A_UART_NO_PARITY,
+		EUSCI_A_UART_LSB_FIRST,
+		EUSCI_A_UART_ONE_STOP_BIT,
+		EUSCI_A_UART_MODE,
+		EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION
     };
     EUSCI_A_UART_init(EUSCI_A0_BASE, &uart_a0_param);
     EUSCI_A_UART_enable(EUSCI_A0_BASE);
