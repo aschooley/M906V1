@@ -217,8 +217,8 @@ void do_stuff(void)
     if (true == g.sample_wells)   //if(g.update_display)
     {
         g.sample_wells = false;
-        bsp_pin_digital_write(&pins.led_power_en, DISABLED);
-        bsp_pin_digital_write(&pins.stack_power_en, ENABLED);
+ //       bsp_pin_digital_write(&pins.led_power_en, DISABLED);
+ //       bsp_pin_digital_write(&pins.stack_power_en, ENABLED);
 
 
         unsigned int i;
@@ -271,8 +271,8 @@ void do_stuff(void)
         sprintf(sprintf_buffer, "\r\n");
         cout_data_channel(sprintf_buffer);
 
-        bsp_pin_digital_write(&pins.stack_power_en, DISABLED);
-        bsp_pin_digital_write(&pins.led_power_en, ENABLED);
+    //    bsp_pin_digital_write(&pins.stack_power_en, DISABLED);
+    //    bsp_pin_digital_write(&pins.led_power_en, ENABLED);
     }
 
 

@@ -74,14 +74,17 @@ openlogger_status_t openlogger_get_startup_msg (void);
 /*
  * Clock System Initialization
  */
+
 void Init_Clock()
 {
     // Set P4.1 and P4.2 as Secondary Module Function Input, LFXT.
-    GPIO_setAsPeripheralModuleFunctionInputPin(
+    /* no lfx
+	GPIO_setAsPeripheralModuleFunctionInputPin(
         GPIO_PORT_PJ,
         GPIO_PIN4 + GPIO_PIN5,
         GPIO_PRIMARY_MODULE_FUNCTION
         );
+    */
 
     // Set DCO frequency to default 8MHz
     CS_setDCOFreq(CS_DCORSEL_0, CS_DCOFSEL_6);
@@ -95,12 +98,13 @@ void Init_Clock()
     // Intializes the XT1 crystal oscillator
     CS_turnOnLFXT(CS_LFXT_DRIVE_3);
 }
+
 // *****************************************************************************
 // Public function bodies
 // *****************************************************************************
 
 
-
+/*
 void check_for_trace_msg(void)
 {
     // Check if a msg was recieved on the trace port.
@@ -128,6 +132,7 @@ void check_for_trace_msg(void)
         }
     }
 }
+*/
 void sw_delay(uint32_t num)
 {
     for (; num > 0; num--)
@@ -144,12 +149,15 @@ void sw_delay(uint32_t num)
 
 }
 
+/*
 void openlogger_start(void)
 {
     bsp_pin_digital_write(&pins.uart_1w_sd_sel, LOW);
     bsp_pin_digital_write(&pins.sd_pwr_en, ENABLED);
     bsp_pin_digital_write(&pins.logger_rst, DISABLED);
 }
+*/
+/*
 void openlogger_stop(void)
 {
     // will close out the current file
@@ -160,8 +168,8 @@ void openlogger_stop(void)
     bsp_pin_digital_write(&pins.sd_pwr_en, DISABLED);
     bsp_pin_digital_write(&pins.uart_1w_sd_sel, HIGH);
 }
-
-
+*/
+/*
 openlogger_status_t openlogger_get_startup_msg(void)
 {
     const uint8_t rx_buff_sz = 40;
@@ -209,6 +217,8 @@ openlogger_status_t openlogger_get_startup_msg(void)
     }
     return (retval);
 }
+*/
+/*
 bool openlogger_md(char * const folder)
 {
 
@@ -242,6 +252,8 @@ bool openlogger_md(char * const folder)
     return (retval);
 
 }
+*/
+/*
 bool openlogger_cd(char * const folder)
 {
     bool          retval     = true;
@@ -274,7 +286,8 @@ bool openlogger_cd(char * const folder)
     return (retval);
 
 }
-
+*/
+/*
 bool openlogger_append(char * const file, char * const extension)
 {
     bool          retval     = true;
@@ -307,6 +320,8 @@ bool openlogger_append(char * const file, char * const extension)
     return (retval);
 
 }
+*/
+/*
 void write_meta_data_file(rtc_t current_time)
 {
     const uint8_t comm_buff_sz = 130;
@@ -352,7 +367,8 @@ void write_meta_data_file(rtc_t current_time)
 
     }
 }
-
+*/
+/*
 bool openlogger_got_to_cmd_mode(void)
 {
     bool          retval     = true;
@@ -384,7 +400,7 @@ bool openlogger_got_to_cmd_mode(void)
     }
     return (retval);
 }
-
+*/
 
 int main(void)
 {
@@ -397,7 +413,13 @@ int main(void)
     Init_Clock();
     logger_init();
     bsp_pins_initalize();
-    drv_rtc_init();
+
+    for(;;)
+    {
+
+    }
+
+  /*  drv_rtc_init();
 
     bsp_pin_digital_write(&pins.led_power_en, ENABLED);
 
@@ -533,7 +555,7 @@ int main(void)
 
         }
     }
-
+*/
     return 0;
 }
 

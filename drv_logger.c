@@ -86,15 +86,10 @@ void logger_init(void)
 
 void get_time(char * const buffer, const uint8_t buff_sz)
 {
-    rtc_t current_time = drv_rtc_read_time_date();
+	static uint32_t msg_number = 0;
+	snprintf(buffer, buff_sz, "%d",
+			msg_number);
 
-    snprintf(buffer, buff_sz, "20%02d%02d%02d %02d:%02d:%02d",
-             current_time.year,
-             current_time.month,
-             current_time.day,
-             current_time.hour,
-             current_time.minute,
-             current_time.second);
 }
 void error_logger_log (const char * msg)
 {

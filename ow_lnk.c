@@ -100,7 +100,7 @@ SMALLINT OpenCOM(int portnum, char * port_zstr)
     EUSCI_A_UART_enableInterrupt(EUSCI_A0_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);    // Enable interrupt
     __enable_interrupt();
 
-    bsp_pin_digital_write(&pins.uart_1w_sd_sel, HIGH);
+   // bsp_pin_digital_write(&pins.uart_1w_sd_sel, HIGH);
 
     return 1;
 }
@@ -114,8 +114,8 @@ SMALLINT OpenCOM(int portnum, char * port_zstr)
 void CloseCOM(int portnum)
 {
     EUSCI_A_UART_disable(EUSCI_A0_BASE);
-
-    bsp_pin_digital_write(&pins.uart_1w_sd_sel, LOW);
+// @todo, fix link file
+    //bsp_pin_digital_write(&pins.uart_1w_sd_sel, LOW);
 }
 
 //---------------------------------------------------------------------------

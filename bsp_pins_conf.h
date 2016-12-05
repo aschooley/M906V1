@@ -117,8 +117,8 @@ extern "C" {
 #define PIN_81  {81, PORT_NA, BIT_NA} // HFXOUT
 #define PIN_82  {82, PORT_NA, BIT_NA} // HFXIN
 #define PIN_83  {83, PORT_NA, BIT_NA} // AVSS1
-#define PIN_84  {84, PORT_NA, BIT_NA} // LFXIN
-#define PIN_85  {85, PORT_NA, BIT_NA} // LFXOUT
+#define PIN_84  {84, PORT_NA, BIT_NA} // LFXIN  UPDATE LATER PJ.4
+#define PIN_85  {85, PORT_NA, BIT_NA} // LFXOUT UPDATE LATER PJ.5
 #define PIN_86  {86, PORT_NA, BIT_NA} // AVSS2
 #define PIN_87  {87, PORT_5,  BIT_4}
 #define PIN_88  {88, PORT_5,  BIT_5}
@@ -136,6 +136,7 @@ extern "C" {
 #define PIN_100 {100,PORT_4,  BIT_2}
 
 	//				name    		pin		type	default		enabled	alt_fcn
+/*
 #define pin_table \
 	pin_table_entry(led_1, 			PIN_91,	OUTPUT,	DISABLED,	HIGH,	IO)	\
 	pin_table_entry(led_2, 			PIN_92,	OUTPUT,	DISABLED,	HIGH,	IO)	\
@@ -211,6 +212,88 @@ extern "C" {
 	pin_table_entry(unused_24,		PIN_37,	OUTPUT,	LOW,		NONE,	IO)	\
 	pin_table_entry(unused_25,		PIN_18,	OUTPUT,	LOW,		NONE,	IO)	\
 	pin_table_entry(unused_26,		PIN_74,	OUTPUT,	LOW,		NONE,	IO)	\
+	*/
+
+
+
+//				name    		pin		type	default		enabled	alt_fcn
+#define pin_table \
+	pin_table_entry(fluidics_en_latch_bag_1,	PIN_51,	OUTPUT,	DISABLED,	HIGH,	IO)	\
+	pin_table_entry(heater_en_latch_bag_1, 		PIN_50,	OUTPUT,	DISABLED,	HIGH,	IO)	\
+	pin_table_entry(spi_cs_latch_bag_1, 		PIN_49,	OUTPUT,	DISABLED,	HIGH,	IO)	\
+	pin_table_entry(fluidics_en_latch_mani_1, 	PIN_48,	OUTPUT,	DISABLED,	HIGH,	IO)	\
+	pin_table_entry(fluidics_en_latch_bag_2,	PIN_52,	OUTPUT,	DISABLED,	HIGH,	IO)	\
+	pin_table_entry(heater_en_latch_bag_2, 		PIN_53,	OUTPUT,	DISABLED,	HIGH,	IO)	\
+	pin_table_entry(spi_cs_latch_bag_2, 		PIN_54,	OUTPUT,	DISABLED,	HIGH,	IO)	\
+	pin_table_entry(fluidics_en_latch_mani_2, 	PIN_55,	OUTPUT,	DISABLED,	HIGH,	IO)	\
+	pin_table_entry(card_en_latch_2, 			PIN_56,	OUTPUT,	DISABLED,	HIGH,	IO)	\
+	pin_table_entry(rtd_start, 					PIN_35,	OUTPUT,	DISABLED,	HIGH,	IO)	\
+	pin_table_entry(spi_cs_latch_mani_2, 		PIN_36,	OUTPUT,	DISABLED,	HIGH,	IO)	\
+	pin_table_entry(heater_en_latch_mani2, 		PIN_38,	OUTPUT,	DISABLED,	HIGH,	IO)	\
+	pin_table_entry(cs_latch_clr, 				PIN_44,	OUTPUT,	DISABLED,	HIGH,	IO)	\
+	pin_table_entry(card_en_latch_1, 			PIN_45,	OUTPUT,	DISABLED,	HIGH,	IO)	\
+	pin_table_entry(heater_en_latch_mani_1, 	PIN_46,	OUTPUT,	DISABLED,	HIGH,	IO)	\
+	pin_table_entry(spi_cs_latch_mani_1, 		PIN_47,	OUTPUT,	DISABLED,	HIGH,	IO)	\
+	pin_table_entry(sda, 			PIN_96, OUTPUT, HIGH, 		NONE,	SECONDARY)	\
+	pin_table_entry(scl,			PIN_97,	OUTPUT,	HIGH,		NONE,	SECONDARY)	\
+	pin_table_entry(spi_clk,		PIN_2,	OUTPUT,	LOW,		NONE,	PRIMARY)	\
+	pin_table_entry(spi_mosi,		PIN_4,	OUTPUT,	LOW,		NONE,	PRIMARY)	\
+	pin_table_entry(spi_miso,		PIN_5,	INPUT,	NONE,		NONE,	PRIMARY)	\
+	pin_table_entry(msp_uart_a_tx, 	PIN_100,OUTPUT,	HIGH,		NONE,	PRIMARY)	\
+	pin_table_entry(msp_uart_a_rx,	PIN_1,	INPUT,	NONE,		NONE,	PRIMARY)	\
+	pin_table_entry(msp_uart_b_tx,	PIN_40,	OUTPUT,	HIGH,		NONE,	PRIMARY)	\
+	pin_table_entry(msp_uart_b_rx,	PIN_41,	INPUT,	NONE,		NONE,	PRIMARY)	\
+	pin_table_entry(avss,			PIN_66,	ANALOG,	NONE,		NONE,	IO)	\
+	pin_table_entry(rev_2048,		PIN_65,	ANALOG,	NONE,		NONE,	IO)	\
+	pin_table_entry(taos_data_out,	PIN_63,	INPUT,	NONE,		NONE,	PRIMARY)	\
+	pin_table_entry(analog_vbus,	PIN_61,	ANALOG,	NONE,		NONE,	IO)	\
+	pin_table_entry(analog_3_3v,	PIN_60,	ANALOG,	NONE,		NONE,	IO)	\
+	pin_table_entry(analog_6v,		PIN_59,	ANALOG,	NONE,		NONE,	IO)	\
+	pin_table_entry(data0,			PIN_67,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(data1,			PIN_68,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(data2,			PIN_69,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(data3,			PIN_70,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(data4,			PIN_71,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(data5,			PIN_72,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(taos_out_en,	PIN_73,	OUTPUT,	DISABLED,	LOW,	IO)	\
+	pin_table_entry(unused_1,		PIN_3,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_2,		PIN_64,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_3,		PIN_62,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_4,		PIN_74,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_5,		PIN_14,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_6,		PIN_15,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_7,		PIN_16,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_8,		PIN_17,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_9,		PIN_23,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_10,		PIN_24,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_11,		PIN_25,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_12,		PIN_39,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_13,		PIN_42,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_14,		PIN_43,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_15,		PIN_91,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_16,		PIN_92,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_17,		PIN_93,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_18,		PIN_94,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_19,		PIN_19,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_20,		PIN_20,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_21,		PIN_21,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_22,		PIN_22,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_23,		PIN_87,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_24,		PIN_88,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_25,		PIN_89,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_26,		PIN_90,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_27,		PIN_7,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_28,		PIN_8,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_29,		PIN_9,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_30,		PIN_10,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_31,		PIN_11,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_32,		PIN_12,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_33,		PIN_13,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_34,		PIN_34,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_35,		PIN_95,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_36,		PIN_37,	OUTPUT,	LOW,		NONE,	IO)	\
+	pin_table_entry(unused_37,		PIN_18,	OUTPUT,	LOW,		NONE,	IO)	\
+
 
 
 

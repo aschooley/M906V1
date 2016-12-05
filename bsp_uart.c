@@ -120,7 +120,7 @@ void init_uart(void)
 int cout_data_channel(const char * _ptr)
 {
 
-    bsp_pin_digital_write(&pins.uart_1w_sd_sel, LOW);
+ //   bsp_pin_digital_write(&pins.uart_1w_sd_sel, LOW);
 
     // Vars to iterate over the string
     uint16_t i, len;
